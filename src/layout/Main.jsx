@@ -14,18 +14,26 @@ export default class Main extends Component {
   handleSubmit = (title, type = 'all') => {
     this.setState({ isLoading: true })
     fetch(
-      `http://www.omdbapi.com/?apikey=${API_KEY}&s=${title}${type !== 'all' ? `&type=${type}` : ''}`,
+      `https://www.omdbapi.com/?apikey=${API_KEY}&s=${title}${type !== 'all' ? `&type=${type}` : ''}`,
     )
       .then(resp => resp.json())
       .then(data =>
         this.setState({ movies: data.Search || [], isLoading: false }),
       )
+      .catch(err => {
+        console.error(err)
+        this.setState({ isLoading: false })
+      })
   }
 
   componentDidMount() {
-    fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=matrix`)
+    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=matrix`)
       .then(resp => resp.json())
       .then(data => this.setState({ movies: data.Search, isLoading: false }))
+      .catch(err => {
+        console.error(err)
+        this.setState({ isLoading: false })
+      })
   }
 
   render() {

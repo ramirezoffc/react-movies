@@ -7,17 +7,21 @@ export default class Search extends Component {
   }
 
   handleFilter = e => {
-    this.setState(
-      () => ({ type: e.target.dataset.type }),
-      () => {
-        this.props.handleSubmit(this.state.search, this.state.type)
-      },
-    )
+    if (this.state.search.trim()) {
+      this.setState(
+        () => ({ type: e.target.dataset.type }),
+        () => {
+          this.props.handleSubmit(this.state.search, this.state.type)
+        },
+      )
+    }
   }
 
   handleKey = e => {
-    if (e.key === 'Enter') {
-      this.props.handleSubmit(this.state.search, this.state.type)
+    if (this.state.search.trim()) {
+      if (e.key === 'Enter') {
+        this.props.handleSubmit(this.state.search, this.state.type)
+      }
     }
   }
 
