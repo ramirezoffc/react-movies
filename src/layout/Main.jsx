@@ -1,49 +1,47 @@
-import React, { Component } from 'react'
+import { useState, useEffect } from 'react'
 import Movies from '../components/Movies'
 import Preloader from '../components/Preloader'
 import Search from '../components/Search'
 
 const API_KEY = process.env.REACT_APP_API_KEY
 
-export default class Main extends Component {
-  state = {
-    movies: [],
-    isLoading: true,
-  }
+export default function Main() {
+  const [movies, setMovies] = useState([])
+  const [isLoading, setLoading] = useState(true)
 
-  handleSubmit = (title, type = 'all') => {
-    this.setState({ isLoading: true })
+  const handleSubmit = (title, type = 'all') => {
+    setLoading(true)
     fetch(
       `https://www.omdbapi.com/?apikey=${API_KEY}&s=${title}${type !== 'all' ? `&type=${type}` : ''}`,
     )
       .then(resp => resp.json())
-      .then(data =>
-        this.setState({ movies: data.Search || [], isLoading: false }),
-      )
+      .then(data => {
+        setMovies(data.Search || [])
+        setLoading(false)
+      })
       .catch(err => {
         console.error(err)
-        this.setState({ isLoading: false })
+        setLoading(false)
       })
   }
 
-  componentDidMount() {
+  useEffect(() => {
     fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=matrix`)
       .then(resp => resp.json())
-      .then(data => this.setState({ movies: data.Search, isLoading: false }))
+      .then(data => {
+        setMovies(data.Search)
+        setLoading(false)
+      })
       .catch(err => {
         console.error(err)
-        this.setState({ isLoading: false })
+        setLoading(false)
       })
-  }
+  }, [])
 
-  render() {
-    const { movies, isLoading } = this.state
-
-    return (
-      <main className="container content">
-        <Search handleSubmit={this.handleSubmit} />
-        {!isLoading ? <Movies movies={movies} /> : <Preloader />}
-      </main>
-    )
-  }
+  return (
+    <main className="container content">
+      <Search handleSubmit={handleSubmit} />
+      {!isLoading ? <Movies movies={movies} /> : <Preloader />}
+    </main>
+  )
 }
